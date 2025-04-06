@@ -1,8 +1,16 @@
 from neo4j import GraphDatabase
 from typing import Dict, List, Any, Optional
 import logging
-from ..config import NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, EMBEDDING_DIMENSION, VECTOR_INDEX_NAME, VECTOR_NODE_LABEL, VECTOR_PROPERTY
-from .vector_search import VectorSearch
+from config import (
+    NEO4J_URI, 
+    NEO4J_USERNAME, 
+    NEO4J_PASSWORD, 
+    EMBEDDING_DIMENSION, 
+    VECTOR_INDEX_NAME, 
+    VECTOR_NODE_LABEL, 
+    VECTOR_PROPERTY
+)
+from database.vector_search import VectorSearch  # Changed from relative to absolute
 
 class Neo4jDriver:
     """Neo4j database driver for interacting with the Neo4j graph database.

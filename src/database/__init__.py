@@ -1,3 +1,3 @@
-from .neo4j_driver import neo4j_driver
+from .neo4j_driver import Neo4jDriver
 
-__all__ = ['neo4j_driver']
+__all__ = ['Neo4jDriver']

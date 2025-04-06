@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List, Any, Optional
 import json
 import requests
-from ..config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL, ANSWER_GENERATOR_MODEL
+from config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL, ANSWER_GENERATOR_MODEL  # Changed from relative to absolute import
 
 class AnswerGenerator:
     """Generates natural language answers from graph query results using LLMs via OpenRouter API.

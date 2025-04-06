@@ -1,22 +1,15 @@
 import streamlit as st
-import logging
-import json
 import time
-from typing import Dict, Any
+import logging
+from orchestrator import Orchestrator
+from utils import monitoring_dashboard
 
-# Import the orchestrator and monitoring components
-from orchestrator import orchestrator
-from utils.monitoring import monitoring
-from utils.dashboard import monitoring_dashboard
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Initialize the orchestrator
+orchestrator = Orchestrator()
 
 # Set page configuration
 st.set_page_config(

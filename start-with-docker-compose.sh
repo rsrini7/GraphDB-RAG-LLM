@@ -99,4 +99,6 @@ fi
 
 # Start the Streamlit application
 echo "[6/6] Starting Streamlit Application..."
+# Add src to PYTHONPATH before running
+export PYTHONPATH="${PYTHONPATH}:${PWD}/src"
 streamlit run src/app.py

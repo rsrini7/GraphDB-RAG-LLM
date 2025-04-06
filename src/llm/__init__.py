@@ -1,4 +1,4 @@
-from .query_translator import query_translator
-from .answer_generator import answer_generator
+from .query_translator import QueryTranslator
+from .answer_generator import AnswerGenerator
 
-__all__ = ['query_translator', 'answer_generator']
+__all__ = ['QueryTranslator', 'AnswerGenerator']

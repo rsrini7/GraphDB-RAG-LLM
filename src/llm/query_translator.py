@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any, Optional
 import requests
-from config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL, QUERY_TRANSLATOR_MODEL
+from config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL, QUERY_TRANSLATOR_MODEL  # Changed from relative to absolute import
 
 class QueryTranslator:
     """Translates natural language questions into Cypher queries using LLMs via OpenRouter API.
