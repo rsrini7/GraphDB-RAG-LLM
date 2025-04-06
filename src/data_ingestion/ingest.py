@@ -6,6 +6,8 @@ import csv
 import pandas as pd
 from typing import Dict, List, Any, Optional, Union
 from pathlib import Path
+import nltk
+nltk.download('punkt', quiet=True)
 
 from .preprocessor import document_preprocessor
 from .embedding import embedding_generator

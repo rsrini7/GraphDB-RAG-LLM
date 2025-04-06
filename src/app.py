@@ -53,7 +53,7 @@ def process_question(question: str) -> Dict[str, Any]:
         question: The natural language question from the user
         
     Returns:
-        Dictionary containing the answer and additional information
+        Dict    y containing the answer and additional information
     """
     start_time = time.time()
     try:
@@ -107,6 +107,54 @@ with st.sidebar:
         "This system uses a Neo4j graph database with vector search capabilities "
         "to answer questions based on both structured data and semantic similarity."
     )
+
+    st.header("Data Ingestion")
+    load_sample = st.checkbox("Load from sample_data", value=True)
+    data_location = st.text_input(
+        "Data file location",
+        value="",
+        disabled=load_sample,
+        placeholder="Enter path to your data file"
+    )
+
+    file_type = st.selectbox("File type", options=["", "csv", "json", "txt"], index=0)
+    chunk_size = st.number_input("Chunk size (characters)", min_value=100, max_value=5000, value=512, step=100)
+    chunk_overlap = st.number_input("Chunk overlap (characters)", min_value=0, max_value=1000, value=50, step=10)
+    embedding_model = st.text_input("Embedding model (optional)", value="")
+    clear_existing = st.checkbox("Clear existing data before ingestion", value=False)
+    verbose = st.checkbox("Verbose logging", value=False)
+
+    if st.button("Load Data"):
+        if load_sample:
+            selected_path = "sample_data"
+        else:
+            selected_path = data_location.strip()
+        if not selected_path:
+            st.warning("Please provide a valid data location.")
+        else:
+            try:
+                from data_ingestion.ingest import DataIngestion
+
+                ingestion = DataIngestion()
+
+                if clear_existing:
+                    ingestion.clear_existing_data()
+
+                ingestion.preprocessor.chunk_size = chunk_size
+                ingestion.preprocessor.chunk_overlap = chunk_overlap
+
+                if embedding_model:
+                    ingestion.embedding_generator.model_name = embedding_model
+                    ingestion.embedding_generator._load_model()
+
+                ingestion.ingest_data(
+                    data_path=selected_path,
+                    file_type=file_type if file_type else None
+                )
+
+                st.success(f"Data ingestion completed from: {selected_path}")
+            except Exception as e:
+                st.error(f"Data ingestion failed: {e}")
     
     st.header("Query History")
     if st.session_state.history:

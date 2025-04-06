@@ -86,6 +86,9 @@ source "$VENV_DIR/bin/activate"
 echo "Installing dependencies using uv..."
 uv pip install -r requirements.txt
 
+echo "Downloading NLTK 'punkt' tokenizer data..."
+python3 -c "import nltk; nltk.download('punkt_tab', download_dir='/Users/srini/Ws/graphdb-llm/venv/nltk_data')"
+
 # Check if data ingestion is needed
 echo "Checking if data ingestion is needed..."
 DOCUMENT_COUNT=$(docker exec neo4j-graphrag cypher-shell -u neo4j -p password "MATCH (d:Document) RETURN count(d) as count;" 2>/dev/null | grep -o '[0-9]\+' || echo "0")
