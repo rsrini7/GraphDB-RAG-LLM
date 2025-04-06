@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # GraphRAG Startup Script
 # This script automates the startup process for the GraphRAG system

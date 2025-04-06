@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Any, Union
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from ..config import EMBEDDING_MODEL, EMBEDDING_DIMENSION
+from config import EMBEDDING_MODEL, EMBEDDING_DIMENSION
 
 class EmbeddingGenerator:
     """Generates vector embeddings for text chunks.
