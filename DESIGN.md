@@ -1,5 +1,3 @@
-Based on the GraphRAG project information you've provided, I'll create a detailed design framework for integrating Neo4j with LLMs. This design will outline the architecture, components, data flow, and implementation considerations without providing the actual code.
-
 # GraphRAG: Neo4j and LLM Integration - Detailed Design
 
 ## 1. System Architecture Overview

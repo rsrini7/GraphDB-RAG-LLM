@@ -4,7 +4,7 @@ import os
 import time
 from typing import Dict, Any, Optional, Union
 from pathlib import Path
-from ..config import CACHE_TTL
+from config import CACHE_TTL
 
 class ResponseCache:
     """Cache for storing and retrieving responses to avoid redundant LLM calls.

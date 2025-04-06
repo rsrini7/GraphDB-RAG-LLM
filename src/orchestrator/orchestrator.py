@@ -8,6 +8,8 @@ from utils.error_handler import error_handler
 from utils.monitoring import monitoring
 from data_ingestion.preprocessor import document_preprocessor
 from data_ingestion.embedding import embedding_generator
+from database.neo4j_driver import neo4j_driver
+from cache.response_cache import response_cache
 
 class Orchestrator:
     """Central orchestrator for the GraphRAG system.
@@ -19,8 +21,8 @@ class Orchestrator:
     def __init__(self):
         """Initialize the Orchestrator."""
         self.logger = logging.getLogger(__name__)
-        self.query_translator = query_translator
-        self.answer_generator = answer_generator
+        self.query_translator = QueryTranslator()
+        self.answer_generator = AnswerGenerator()
         self.db_driver = neo4j_driver
         self.cache = response_cache
         self.preprocessor = document_preprocessor
