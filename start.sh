@@ -43,7 +43,13 @@ NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=password
 # Add your OpenRouter API key below
-OPENROUTER_API_KEY=
+OPENROUTER_API_KEY=<REPLACE-KEY>
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1/chat/completions
+QUERY_TRANSLATOR_MODEL=openrouter/quasar-alpha
+ANSWER_GENERATOR_MODEL=openrouter/quasar-alpha
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+CACHE_TTL=3600
+LOG_LEVEL=INFO
 EOL
   echo "Created .env file. Please edit it to add your OpenRouter API key."
 fi
