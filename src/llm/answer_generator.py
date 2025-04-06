@@ -132,7 +132,7 @@ class AnswerGenerator:
         
         try:
             response = requests.post(
-                f"{self.base_url}/chat/completions",
+                self.base_url,
                 headers=headers,
                 json=data
             )

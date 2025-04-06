@@ -3,6 +3,7 @@ import time
 import logging
 from orchestrator import Orchestrator
 from utils import monitoring_dashboard
+from utils.monitoring import monitoring
 from typing import Dict, Any
 
 # Setup logging
