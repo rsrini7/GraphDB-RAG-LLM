@@ -31,7 +31,8 @@ VECTOR_NODE_LABEL = "Document"
 VECTOR_PROPERTY = "embedding"
 
 # Cache Configuration
-CACHE_TTL = int(os.getenv("CACHE_TTL", 3600))  # Time to live in seconds (default: 1 hour)
+# Time to live in seconds (default: 1 hour)
+CACHE_TTL = int(os.getenv("CACHE_TTL", "3600"))
 
 # Logging Configuration
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
