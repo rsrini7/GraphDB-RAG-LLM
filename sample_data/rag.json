@@ -1,0 +1,10 @@
+[
+  {
+    "title": "What is Retrieval-Augmented Generation (RAG)?",
+    "content": "RAG combines retrieval of relevant documents with generative models to produce more accurate and grounded responses."
+  },
+  {
+    "title": "Benefits of RAG",
+    "content": "RAG improves factual accuracy, reduces hallucinations, and enables dynamic knowledge integration in language models."
+  }
+]
