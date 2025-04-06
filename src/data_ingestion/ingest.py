@@ -9,9 +9,9 @@ from pathlib import Path
 
 from .preprocessor import document_preprocessor
 from .embedding import embedding_generator
-from ..database.neo4j_driver import neo4j_driver
-from ..utils.monitoring import monitoring
-from ..utils.error_handler import error_handler
+from database.neo4j_driver import neo4j_driver
+from utils.monitoring import monitoring
+from utils.error_handler import error_handler
 
 class DataIngestion:
     """Main data ingestion script for the GraphRAG system.
