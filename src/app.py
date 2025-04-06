@@ -95,29 +95,37 @@ with st.sidebar:
     else:
         st.write("No queries yet. Ask a question to get started!")
 
+# Initialize session state for button state if not exists
+if 'processing' not in st.session_state:
+    st.session_state.processing = False
+
 # Main content area
 st.header("Ask a Question")
 question = st.text_area("Enter your question:", height=100)
 
-if st.button("Submit", type="primary"):
+if st.button("Submit", type="primary", disabled=st.session_state.processing):
     if question:
-        with st.spinner("Processing your question..."):
-            # Process the question
-            result = process_question(question)
-            
-            if "status" in result and result["status"] == "error":
-                st.error(f"Error: {result['error_message']}")
-            else:
-                # Display the answer
-                st.header("Answer")
-                st.write(result["answer"])
+        try:
+            st.session_state.processing = True
+            with st.spinner("Processing your question..."):
+                # Process the question
+                result = process_question(question)
                 
-                # Display additional information in expandable sections
-                with st.expander("Cypher Query"):
-                    st.code(result["cypher_query"], language="cypher")
-                
-                with st.expander("Query Results"):
-                    st.json(result["query_results"])
+                if "status" in result and result["status"] == "error":
+                    st.error(f"Error: {result['error_message']}")
+                else:
+                    # Display the answer
+                    st.header("Answer")
+                    st.write(result["answer"])
+                    
+                    # Display additional information in expandable sections
+                    with st.expander("Cypher Query"):
+                        st.code(result["cypher_query"], language="cypher")
+                    
+                    with st.expander("Query Results"):
+                        st.json(result["query_results"])
+        finally:
+            st.session_state.processing = False
     else:
         st.warning("Please enter a question.")
 
