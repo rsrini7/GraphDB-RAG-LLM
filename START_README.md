@@ -1,59 +1,95 @@
 # GraphRAG Startup Guide
 
-This document explains how to use the automated startup script for the GraphRAG system.
+This guide explains how to start the GraphRAG system using the provided helper scripts.
+
+---
 
 ## Prerequisites
 
-Before running the startup script, ensure you have:
+Before starting, ensure you have:
 
 1. Docker installed and running
-2. Python with all required dependencies installed (see `requirements.txt`)
-3. An OpenRouter API key (if you plan to use the LLM features)
+2. Python 3.9+ with dependencies installed (`requirements.txt`)
+3. An OpenRouter API key (for LLM features)
+4. A configured `.env` file (copy from `.env.example` if needed)
+
+---
 
 ## Using the Startup Script
 
-The `start.sh` script automates the entire process of starting the GraphRAG system. It will:
+The `start-with-docker-compose.sh` script automates the startup process:
 
-1. Check if Docker is running
-2. Start the Neo4j database using Docker Compose
-3. Wait for Neo4j to be ready and verify the connection
-4. Check for environment configuration (.env file)
-5. Check if data ingestion is needed
-6. Start the Streamlit application
+- Starts the Neo4j database via Docker Compose
+- Waits for Neo4j to be ready
+- Checks for environment configuration
+- Optionally, you can ingest data before or after startup
+- Launches the Streamlit application
 
-### Running the Script
-
-To start the GraphRAG system, simply run:
+### To start the system, run:
 
 ```bash
-./start.sh
+./start-with-docker-compose.sh
 ```
 
-### First-Time Setup
+---
 
-If this is your first time running the system:
+## First-Time Setup
 
-1. The script will create a basic `.env` file if one doesn't exist
-2. You'll need to edit the `.env` file to add your OpenRouter API key
-3. If no documents are found in the database, you'll need to run data ingestion:
+1. Copy `.env.example` to `.env` and add your OpenRouter API key.
+2. If no data is present, ingest your data:
 
 ```bash
 python src/data_ingestion/ingest.py --data-path /path/to/your/data
 ```
 
+Or use the sample data ingester:
+
+```bash
+./sample-data-ingester.sh
+```
+
+---
+
+## Alternative: Manual Startup
+
+You can also start components manually:
+
+1. Start Neo4j:
+
+```bash
+docker-compose up -d
+```
+
+2. Ingest data (if needed):
+
+```bash
+python src/data_ingestion/ingest.py --data-path /path/to/your/data
+```
+
+3. Launch the app:
+
+```bash
+streamlit run src/app.py
+```
+
+Or use:
+
+```bash
+./run.sh
+```
+
+---
+
 ## Troubleshooting
 
-If you encounter issues:
+- Ensure Docker is running
+- Check that ports 7474 and 7687 are free
+- Verify `.env` contains valid credentials
+- Review logs for errors
 
-1. Ensure Docker is running
-2. Check that ports 7474 and 7687 are available for Neo4j
-3. Verify your OpenRouter API key is correctly set in the `.env` file
-4. Check the logs for any error messages
+---
 
-## Manual Startup (Alternative)
+## Summary
 
-If you prefer to start components manually:
-
-1. Start Neo4j: `docker-compose up -d`
-2. Run data ingestion (if needed): `python src/data_ingestion/ingest.py --data-path /path/to/your/data`
-3. Start Streamlit: `streamlit run src/app.py`
+- **Recommended:** `./start-with-docker-compose.sh`
+- **Manual:** Start Neo4j, ingest data, then run Streamlit
