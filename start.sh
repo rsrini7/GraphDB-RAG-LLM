@@ -5,6 +5,9 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
+# Define virtual environment directory
+VENV_DIR="venv"
+
 echo "===== Starting GraphRAG System ====="
 
 # Check if Docker is running
@@ -13,14 +16,14 @@ if ! docker info > /dev/null 2>&1; then
   exit 1
 fi
 
-echo "[1/4] Starting Neo4j database with Docker Compose..."
-if ! docker-compose up -d; then
+echo "[1/6] Starting Neo4j database with Docker Compose..."
+if ! docker compose up -d; then
   echo "Error: Failed to start Neo4j with Docker Compose."
   exit 1
 fi
 
 # Wait for Neo4j to be ready
-echo "[2/4] Waiting for Neo4j to be ready..."
+echo "[2/6] Waiting for Neo4j to be ready..."
 MAX_RETRIES=30
 COUNTER=0
 while ! docker exec neo4j-graphrag cypher-shell -u neo4j -p password "RETURN 1;" > /dev/null 2>&1; do
@@ -35,7 +38,7 @@ done
 echo "Neo4j is ready!"
 
 # Check if .env file exists
-echo "[3/4] Checking environment configuration..."
+echo "[3/6] Checking environment configuration..."
 if [ ! -f ".env" ]; then
   echo "Warning: .env file not found. Creating a basic .env file with default values."
   cat > .env << EOL
@@ -54,8 +57,37 @@ EOL
   echo "Created .env file. Please edit it to add your OpenRouter API key."
 fi
 
+# Check if uv is installed and install if needed
+echo "[4/6] Checking if uv is installed..."
+if ! command -v uv &> /dev/null; then
+  echo "uv not found. Installing uv..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  # Add uv to PATH for this session
+  export PATH="$HOME/.cargo/bin:$PATH"
+  if ! command -v uv &> /dev/null; then
+    echo "Error: Failed to install uv. Please install it manually:"
+    echo "curl -LsSf https://astral.sh/uv/install.sh | sh"
+    exit 1
+  fi
+fi
+
+# Create virtual environment if it doesn't exist
+echo "[5/6] Setting up virtual environment..."
+if [ ! -d "$VENV_DIR" ]; then
+  echo "Creating virtual environment using uv..."
+  uv venv "$VENV_DIR"
+fi
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+source "$VENV_DIR/bin/activate"
+
+# Install dependencies using uv
+echo "Installing dependencies using uv..."
+uv pip install -r requirements.txt
+
 # Check if data ingestion is needed
-echo "[4/4] Checking if data ingestion is needed..."
+echo "Checking if data ingestion is needed..."
 DOCUMENT_COUNT=$(docker exec neo4j-graphrag cypher-shell -u neo4j -p password "MATCH (d:Document) RETURN count(d) as count;" 2>/dev/null | grep -o '[0-9]\+' || echo "0")
 
 if [ "$DOCUMENT_COUNT" -eq "0" ]; then
@@ -66,5 +98,5 @@ else
 fi
 
 # Start the Streamlit application
-echo "===== Starting Streamlit Application ====="
+echo "[6/6] Starting Streamlit Application..."
 streamlit run src/app.py
