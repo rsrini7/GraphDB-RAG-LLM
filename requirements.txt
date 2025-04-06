@@ -1,0 +1,20 @@
+# Core dependencies
+streamlit>=1.22.0
+langchain>=0.0.267
+openai>=0.27.8
+neo4j>=5.8.1
+python-dotenv>=1.0.0
+
+# Vector embeddings
+sentence-transformers>=2.2.2
+
+# Data processing
+pandas>=2.0.3
+numpy>=1.24.3
+
+# Caching and utilities
+redis>=4.6.0
+pydantic>=2.0.3
+
+# Monitoring and logging
+loguru>=0.7.0
