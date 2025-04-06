@@ -133,11 +133,20 @@ with st.sidebar:
             st.warning("Please provide a valid data location.")
         else:
             try:
+                import logging as pylogging
                 from data_ingestion.ingest import DataIngestion
+
+                if verbose:
+                    pylogging.getLogger().setLevel(pylogging.DEBUG)
+                else:
+                    pylogging.getLogger().setLevel(pylogging.INFO)
+
+                st.info(f"Starting data ingestion from: {selected_path}")
 
                 ingestion = DataIngestion()
 
                 if clear_existing:
+                    st.info("Clearing existing data before ingestion...")
                     ingestion.clear_existing_data()
 
                 ingestion.preprocessor.chunk_size = chunk_size
@@ -152,7 +161,7 @@ with st.sidebar:
                     file_type=file_type if file_type else None
                 )
 
-                st.success(f"Data ingestion completed from: {selected_path}")
+                st.success(f"Data ingestion completed successfully from: {selected_path}")
             except Exception as e:
                 st.error(f"Data ingestion failed: {e}")
     

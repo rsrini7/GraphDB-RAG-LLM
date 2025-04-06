@@ -139,6 +139,27 @@ class Neo4jDriver:
             properties: Dictionary of node properties
             embedding: Vector embedding as a list of floats
         """
+        import json as pyjson
+
+        def sanitize_props(props):
+            sanitized = {}
+            for k, v in props.items():
+                if isinstance(v, dict):
+                    sanitized[k] = pyjson.dumps(v)
+                elif isinstance(v, list):
+                    sanitized_list = []
+                    for item in v:
+                        if isinstance(item, dict):
+                            sanitized_list.append(pyjson.dumps(item))
+                        else:
+                            sanitized_list.append(item)
+                    sanitized[k] = sanitized_list
+                else:
+                    sanitized[k] = v
+            return sanitized
+
+        sanitized_properties = sanitize_props(properties)
+
         query = f"""
         CREATE (n:{node_label} $properties)
         SET n.embedding = $embedding
@@ -146,7 +167,7 @@ class Neo4jDriver:
         """
         
         params = {
-            "properties": properties,
+            "properties": sanitized_properties,
             "embedding": embedding
         }
         
