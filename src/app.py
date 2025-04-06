@@ -1,10 +1,32 @@
 import streamlit as st
 import time
 import logging
+import json
+import os
 from orchestrator import Orchestrator
 from utils import monitoring_dashboard
 from utils.monitoring import monitoring
 from typing import Dict, Any
+
+HISTORY_FILE = "chat_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r") as f:
+                st.session_state.history = json.load(f)
+        except Exception as e:
+            logging.error(f"Failed to load chat history: {e}")
+            st.session_state.history = []
+    else:
+        st.session_state.history = []
+
+def save_history():
+    try:
+        with open(HISTORY_FILE, "w") as f:
+            json.dump(st.session_state.history, f)
+    except Exception as e:
+        logging.error(f"Failed to save chat history: {e}")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -20,9 +42,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# Initialize session state for history
+# Initialize or load session state for history
 if 'history' not in st.session_state:
-    st.session_state.history = []
+    load_history()
 
 def process_question(question: str) -> Dict[str, Any]:
     """Process a user question through the orchestrator.
@@ -49,6 +71,7 @@ def process_question(question: str) -> Dict[str, Any]:
             "cypher_query": result["cypher_query"],
             "query_results": result["query_results"]
         })
+        save_history()
         
         # Update dashboard metrics
         elapsed_time = time.time() - start_time
