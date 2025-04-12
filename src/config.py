@@ -26,7 +26,7 @@ EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM
 EMBEDDING_DIMENSION = 384  # Dimension for the specified model
 
 # Vector Search Configuration
-VECTOR_INDEX_NAME = "document_embeddings"
+VECTOR_INDEX_NAME = "Document_embedding_index"
 VECTOR_NODE_LABEL = "Document"
 VECTOR_PROPERTY = "embedding"
 
