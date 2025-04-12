@@ -4,49 +4,44 @@ import traceback
 from functools import wraps
 
 class ErrorHandler:
-    """Centralized error handling for the GraphRAG system.
-    
-    This class provides methods for catching and handling exceptions,
-    implementing error recovery strategies, and logging errors.
-    """
+    """Centralized error handling for the GraphRAG system."""
     
     def __init__(self):
         """Initialize the ErrorHandler."""
         self.logger = logging.getLogger(__name__)
-    
+
     def handle_error(self, error: Exception, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Handle an exception and return an appropriate response.
+        """Handle an exception and return an error response dictionary.
         
         Args:
-            error: The exception that was raised
-            context: Optional context information about where the error occurred
+            error: The exception that occurred
+            context: Optional context about where/when the error occurred
             
         Returns:
-            Dictionary with error information and status
+            Dict containing error details and user-friendly message
         """
         error_type = type(error).__name__
         error_message = str(error)
         stack_trace = traceback.format_exc()
         
-        # Log the error with context
-        self.logger.error(
-            f"Error: {error_type}: {error_message}\n"
-            f"Context: {context}\n"
-            f"Stack trace: {stack_trace}"
-        )
+        # Log the full error details
+        self.logger.error(f"Error type: {error_type}")
+        self.logger.error(f"Error message: {error_message}")
+        self.logger.error(f"Stack trace: {stack_trace}")
+        if context:
+            self.logger.error(f"Error context: {context}")
         
-        # Prepare error response
-        error_response = {
+        return {
             "status": "error",
             "error_type": error_type,
             "error_message": error_message,
-            "context": context or {}
+            "user_message": self.get_user_friendly_message(error_type, error_message),
+            "context": context or {},
+            "stack_trace": stack_trace
         }
-        
-        return error_response
-    
+
     def with_error_handling(self, fallback_return: Any = None):
-        """Decorator for functions to add error handling.
+        """Decorator for functions that need standardized error handling.
         
         Args:
             fallback_return: Value to return if an error occurs
@@ -60,41 +55,47 @@ class ErrorHandler:
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    context = {
+                    error_response = self.handle_error(e, {
                         "function": func.__name__,
                         "args": str(args),
                         "kwargs": str(kwargs)
-                    }
-                    self.handle_error(e, context)
-                    return fallback_return
+                    })
+                    return fallback_return if fallback_return is not None else error_response
             return wrapper
         return decorator
-    
-    def get_user_friendly_message(self, error_response: Dict[str, Any]) -> str:
-        """Generate a user-friendly error message.
+
+    def get_user_friendly_message(self, error_type: str, error_message: str) -> str:
+        """Convert error details into a user-friendly message.
         
         Args:
-            error_response: The error response dictionary
+            error_type: The type/class of the error
+            error_message: The original error message
             
         Returns:
-            User-friendly error message string
+            A user-friendly error message string
         """
-        error_type = error_response.get("error_type", "Unknown error")
-        error_message = error_response.get("error_message", "An unknown error occurred")
-        
-        # Map error types to user-friendly messages
+        if "NoneType" in error_message and "not subscriptable" in error_message:
+            if "OpenRouter API endpoint not found" in error_message:
+                return "Unable to connect to the AI service. Please check your OpenRouter API configuration and make sure you have a valid API key."
+            return "The system received an unexpected response. Please try again or contact support if the issue persists."
+            
+        if error_type == "ValueError":
+            if "OpenRouter API key not found" in error_message:
+                return "The OpenRouter API key is missing. Please add your API key to the .env file."
+            elif "OpenRouter API endpoint not found" in error_message:
+                return "Unable to connect to OpenRouter API. Please check your API configuration."
+            elif "Invalid OpenRouter API key" in error_message:
+                return "Your OpenRouter API key appears to be invalid. Please check your API key configuration."
+            return f"Invalid input or configuration: {error_message}"
+            
         if error_type == "ConnectionError":
-            return "Could not connect to the database. Please check that Neo4j is running."
-        elif error_type == "AuthenticationError":
-            return "Database authentication failed. Please check your credentials."
-        elif error_type == "SyntaxError" and "Cypher" in error_message:
-            return "There was an issue with the generated database query. Please try rephrasing your question."
-        elif error_type == "ValueError" and "API key" in error_message:
-            return "Missing API key. Please check your environment variables."
-        elif error_type == "TimeoutError":
+            return "Unable to connect to required services. Please check your internet connection and try again."
+            
+        if error_type == "TimeoutError":
             return "The request timed out. Please try again later."
-        else:
-            return f"An error occurred: {error_message}"
+            
+        # Default user-friendly message for unknown errors
+        return "An unexpected error occurred. Please try again or contact support if the issue persists."
 
 # Create a singleton instance
 error_handler = ErrorHandler()

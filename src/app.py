@@ -6,6 +6,7 @@ import os
 from orchestrator import Orchestrator
 from utils import monitoring_dashboard
 from utils.monitoring import monitoring
+from utils.error_handler import error_handler
 from typing import Dict, Any
 
 HISTORY_FILE = "chat_history.json"
@@ -16,7 +17,8 @@ def load_history():
             with open(HISTORY_FILE, "r") as f:
                 st.session_state.history = json.load(f)
         except Exception as e:
-            logging.error(f"Failed to load chat history: {e}")
+            error_resp = error_handler.handle_error(e, {"action": "load_history"})
+            logging.error(f"Failed to load chat history: {error_resp['error_message']}")
             st.session_state.history = []
     else:
         st.session_state.history = []
@@ -26,7 +28,8 @@ def save_history():
         with open(HISTORY_FILE, "w") as f:
             json.dump(st.session_state.history, f)
     except Exception as e:
-        logging.error(f"Failed to save chat history: {e}")
+        error_resp = error_handler.handle_error(e, {"action": "save_history"})
+        logging.error(f"Failed to save chat history: {error_resp['error_message']}")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -53,7 +56,7 @@ def process_question(question: str) -> Dict[str, Any]:
         question: The natural language question from the user
         
     Returns:
-        Dict    y containing the answer and additional information
+        Dict containing the answer and additional information
     """
     start_time = time.time()
     try:
@@ -88,12 +91,17 @@ def process_question(question: str) -> Dict[str, Any]:
         
         return result
     except Exception as e:
-        logger.error(f"Error processing question: {str(e)}")
+        error_resp = error_handler.handle_error(e, {"question": question})
+        logger.error(f"Error processing question: {error_resp['error_message']}")
         monitoring_dashboard.update_metrics("error", 1)
-        monitoring_dashboard.log_activity("error", {"error": str(e), "question": question})
+        monitoring_dashboard.log_activity("error", {
+            "error_type": error_resp["error_type"],
+            "error_message": error_resp["error_message"],
+            "question": question
+        })
         return {
             "status": "error",
-            "error_message": str(e),
+            "error_message": error_resp["user_message"],
             "question": question
         }
 
@@ -163,15 +171,19 @@ with st.sidebar:
 
                 st.success(f"Data ingestion completed successfully from: {selected_path}")
             except Exception as e:
-                st.error(f"Data ingestion failed: {e}")
+                error_resp = error_handler.handle_error(e, {"action": "data_ingestion"})
+                st.error(error_resp["user_message"])
     
     st.header("Query History")
     if st.session_state.history:
         for i, item in enumerate(reversed(st.session_state.history)):
             with st.expander(f"Q: {item['question'][:50]}..."):
                 st.write(f"**Question:** {item['question']}")
-                st.write(f"**Answer:** {item['answer']}")
-                st.write(f"**Cypher Query:**\n```\n{item['cypher_query']}\n```")
+                if item.get("status") == "error":
+                    st.error(f"Error: {item['error_message']}")
+                else:
+                    st.write(f"**Answer:** {item['answer']}")
+                    st.write(f"**Cypher Query:**\n```\n{item['cypher_query']}\n```")
     else:
         st.write("No queries yet. Ask a question to get started!")
 
@@ -192,7 +204,7 @@ if st.button("Submit", type="primary", disabled=st.session_state.processing):
                 result = process_question(question)
                 
                 if "status" in result and result["status"] == "error":
-                    st.error(f"Error: {result['error_message']}")
+                    st.error(result["error_message"])
                 else:
                     # Display the answer
                     st.header("Answer")
@@ -204,6 +216,9 @@ if st.button("Submit", type="primary", disabled=st.session_state.processing):
                     
                     with st.expander("Query Results"):
                         st.json(result["query_results"])
+        except Exception as e:
+            error_resp = error_handler.handle_error(e, {"question": question})
+            st.error(error_resp["user_message"])
         finally:
             st.session_state.processing = False
     else:

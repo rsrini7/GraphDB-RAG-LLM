@@ -48,8 +48,8 @@ NEO4J_PASSWORD=password
 # Add your OpenRouter API key below
 OPENROUTER_API_KEY=<REPLACE-KEY>
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1/chat/completions
-QUERY_TRANSLATOR_MODEL=openrouter/quasar-alpha
-ANSWER_GENERATOR_MODEL=openrouter/quasar-alpha
+QUERY_TRANSLATOR_MODEL=openrouter/optimus-alpha
+ANSWER_GENERATOR_MODEL=openrouter/optimus-alpha
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 CACHE_TTL=3600
 LOG_LEVEL=INFO

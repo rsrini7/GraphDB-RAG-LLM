@@ -18,8 +18,8 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL")
 
 # LLM Model Configuration
-QUERY_TRANSLATOR_MODEL = os.getenv("QUERY_TRANSLATOR_MODEL", "openrouter/quasar-alpha")
-ANSWER_GENERATOR_MODEL = os.getenv("ANSWER_GENERATOR_MODEL", "openrouter/quasar-alpha")
+QUERY_TRANSLATOR_MODEL = os.getenv("QUERY_TRANSLATOR_MODEL", "openrouter/optimus-alpha")
+ANSWER_GENERATOR_MODEL = os.getenv("ANSWER_GENERATOR_MODEL", "openrouter/optimus-alpha")
 
 # Embedding Model Configuration
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")

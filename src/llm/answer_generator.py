@@ -114,6 +114,9 @@ class AnswerGenerator:
             
         Returns:
             Generated text response from the LLM
+            
+        Raises:
+            ValueError: If the API call fails with a detailed error message
         """
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -140,9 +143,22 @@ class AnswerGenerator:
             
             result = response.json()
             return result["choices"][0]["message"]["content"]
-        except Exception as e:
-            logging.error(f"Error calling OpenRouter API: {str(e)}")
-            raise
+        except requests.exceptions.HTTPError as e:
+            error_msg = f"OpenRouter API request failed: {str(e)}"
+            if response.status_code == 404:
+                error_msg = "OpenRouter API endpoint not found. Please check your OPENROUTER_BASE_URL configuration."
+            elif response.status_code == 401:
+                error_msg = "Invalid OpenRouter API key. Please check your OPENROUTER_API_KEY configuration."
+            logging.error(error_msg)
+            raise ValueError(error_msg)
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Network error while calling OpenRouter API: {str(e)}"
+            logging.error(error_msg)
+            raise ValueError(error_msg)
+        except (KeyError, IndexError, json.JSONDecodeError) as e:
+            error_msg = f"Invalid response from OpenRouter API: {str(e)}"
+            logging.error(error_msg)
+            raise ValueError(error_msg)
 
 # Create a singleton instance
 answer_generator = AnswerGenerator()
