@@ -93,3 +93,11 @@ Or use:
 
 - **Recommended:** `./start-with-docker-compose.sh`
 - **Manual:** Start Neo4j, ingest data, then run Streamlit
+
+## Troubleshoot
+
+ERROR:database.vector_search:Error performing vector search: {code: Neo.ClientError.Procedure.ProcedureCallFailed} {message: Failed to invoke procedure `db.index.vector.queryNodes`: Caused by: java.lang.IllegalArgumentException: There is no such vector schema index: Document_embedding_index}
+ERROR:database.neo4j_driver:Error in vector search: {code: Neo.ClientError.Procedure.ProcedureCallFailed} {message: Failed to invoke procedure `db.index.vector.queryNodes`: Caused by: java.lang.IllegalArgumentException: There is no such vector schema index: Document_embedding_index}
+ERROR:orchestrator.orchestrator:Error performing vector search: {code: Neo.ClientError.Procedure.ProcedureCallFailed} {message: Failed to invoke procedure `db.index.vector.queryNodes`: Caused by: java.lang.IllegalArgumentException: There is no such vector schema index: Document_embedding_index}
+
+then run ./fix-check-vector-index.sh

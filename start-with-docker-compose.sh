@@ -48,8 +48,8 @@ NEO4J_PASSWORD=password
 # Add your OpenRouter API key below
 OPENROUTER_API_KEY=<REPLACE-KEY>
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1/chat/completions
-QUERY_TRANSLATOR_MODEL=openrouter/optimus-alpha
-ANSWER_GENERATOR_MODEL=openrouter/optimus-alpha
+QUERY_TRANSLATOR_MODEL=google/gemini-2.5-pro-exp-03-25:free
+ANSWER_GENERATOR_MODEL=google/gemini-2.5-pro-exp-03-25:free
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 CACHE_TTL=3600
 LOG_LEVEL=INFO
@@ -75,7 +75,7 @@ fi
 echo "[5/6] Setting up virtual environment..."
 if [ ! -d "$VENV_DIR" ]; then
   echo "Creating virtual environment using uv..."
-  uv venv "$VENV_DIR"
+  uv venv --python 3.10 "$VENV_DIR"
 fi
 
 # Activate virtual environment
@@ -87,7 +87,7 @@ echo "Installing dependencies using uv..."
 uv pip install -r requirements.txt
 
 echo "Downloading NLTK 'punkt' tokenizer data..."
-python3 -c "import nltk; nltk.download('punkt_tab', download_dir='/Users/srini/Ws/graphdb-llm/venv/nltk_data')"
+python3 -c "import nltk; nltk.download('punkt_tab', download_dir='$VENV_DIR/nltk_data')"
 
 # Check if data ingestion is needed
 echo "Checking if data ingestion is needed..."

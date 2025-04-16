@@ -18,8 +18,8 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL")
 
 # LLM Model Configuration
-QUERY_TRANSLATOR_MODEL = os.getenv("QUERY_TRANSLATOR_MODEL", "openrouter/optimus-alpha")
-ANSWER_GENERATOR_MODEL = os.getenv("ANSWER_GENERATOR_MODEL", "openrouter/optimus-alpha")
+QUERY_TRANSLATOR_MODEL = os.getenv("QUERY_TRANSLATOR_MODEL", "google/gemini-2.5-pro-exp-03-25:free")
+ANSWER_GENERATOR_MODEL = os.getenv("ANSWER_GENERATOR_MODEL", "google/gemini-2.5-pro-exp-03-25:free")
 
 # Embedding Model Configuration
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")

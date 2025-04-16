@@ -1,5 +1,5 @@
 # Core dependencies
-streamlit>=1.22.0
+streamlit>=1.29.0
 langchain>=0.0.267
 openai>=0.27.8
 neo4j>=5.8.1
@@ -19,3 +19,5 @@ nltk>=3.8.1
 
 # Monitoring and logging
 loguru>=0.7.0
+
+setuptools==78.1.0
